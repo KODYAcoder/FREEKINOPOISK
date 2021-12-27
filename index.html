@@ -7,6 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Kinopoisk Watch</title>
 	<link rel="stylesheet" href="assets/style.css">
+	<script defer data-domain="kirlovon.dev/kinopoisk-watch" src="https://plausible.io/js/plausible.js"></script>
 </head>
 
 <body>
@@ -14,12 +15,8 @@
 		<img src="assets/logo.svg">
 	</a>
 
-	<div id="container"></div>
-
-	<div id="actions">
-		<a id="players">Плееры</a>
-		<span>/</span>
-		<a id="torrents">Торренты</a>
+	<div id="container">
+		<div id="yohoho" data-resize="1" data-bg="#000000" data-loading="assets/loading.webp"></div>
 	</div>
 
 	<span id="info">
@@ -29,78 +26,53 @@
 
 	<script>
 		const container = document.getElementById('container');
-		const actions = document.getElementById('actions');
-		const torrents = document.getElementById('torrents');
-		const players = document.getElementById('players');
+		const yohoho = document.getElementById('yohoho');
+		let isLoaded = false;
 
-		// Parse params
-		const params = new URLSearchParams(window.location.search);
-		let id = params.get('id');
-		let title = params.get('title');
+		// Initialize player
+		function init() {
 
-		// Parse hash for old versions
-		const hash = window.location.hash.replace(/\D/g, '');
-		if (hash !== '') {
-			id = hash;
-			console.error('Вы используете старую версию скрипта! Обновитесь до последней версии! \n https://github.com/Kirlovon/Kinopoisk-Watch')
+			// Get ID from search params
+			const params = new URLSearchParams(window.location.search);
+			let id = params.get('id');
+
+			// Get ID from hash (for old versions)
+			if (!id) {
+				const hash = window.location.hash.replace(/\D/g, '');
+				if (hash !== '') id = hash;
+			}
+
+			if (id) {
+				yohoho.setAttribute('data-kinopoisk', id);
+			} else {
+				container.innerText = 'ID фильма не указаны!';
+			}
 		}
 
-		/**
-		 * Switch to players list
-		 */
-		function selectPlayer() {
-			const element = document.createElement('iframe');
-			element.src = `${window.location.pathname}watch.html#${id}`;
+		// Listen for loading events
+		document.addEventListener('DOMContentLoaded', () => {
+			window.addEventListener('message', (event) => {
+				if (!event || !event.data) return;
+				if (event.data.event === 'playerReady') isLoaded = true;
+				if (event.data.quality === '' || event.data.translate === '') isLoaded = true;
+			});
 
-			players.classList.add('active');
-			torrents.classList.remove('active');
+			window.addEventListener('load', () => {
+				setTimeout(() => {
+					if (!isLoaded) {
+						const scriptAttached = !!(document.getElementById('yohoho-iframe') || document.getElementById('yohoho-loading'));
+						container.innerText = scriptAttached ? 'Фильм не найден!' : 'Не удалось загрузить плеер!';
+					}
+				}, 2500);
+			});
+		});
 
-			container.innerHTML = '';
-			container.appendChild(element);
-		}
-
-		/**
-		 * Switch to torrents list 
-		 */
-		function selectTorrent() {
-			const element = document.createElement('iframe');
-			element.src = `${window.location.pathname}download.html#${encodeURI(title)}`;
-
-			players.classList.remove('active');
-			torrents.classList.add('active');
-
-			container.innerHTML = '';
-			container.appendChild(element);
-		}
-
-		// If ID specified
-		if (id) {
-			players.addEventListener('click', selectPlayer);
-		} else {
-			players.classList.add('disabled');
-		}
-
-		// If Title specified
-		if (title) {
-			torrents.addEventListener('click', selectTorrent);
-		} else {
-			torrents.classList.add('disabled');
-		}
-
-		// Show error message if ID & Title are not specified
-		if (!id && !title) {
-			actions.style.display = 'none';
-			container.innerText = 'ID и Название фильма не указаны!'
-		}
-
-		// Init
-		if (id) {
-			selectPlayer();
-		} else if (title) {
-			selectTorrent();
-		}
+		init();
 
 	</script>
+
+	<script defer data-domain="kirlovon.dev/kinopoisk-watch" src="https://plausible.io/js/plausible.js"></script>
+	<script src="//yohoho.cc/yo.js"></script>
 </body>
 
 </html>
