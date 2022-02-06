@@ -51,9 +51,10 @@
 		// Listen for loading events
 		document.addEventListener('DOMContentLoaded', () => {
 			window.addEventListener('message', (event) => {
+				console.log(event.data);
 				if (!event || !event.data) return;
 				if (event.data.event === 'playerReady') isLoaded = true;
-				if (event.data.quality === '' || event.data.translate === '') isLoaded = true;
+				if (event.data.quality || event.data.translate) isLoaded = true;
 			});
 
 			window.addEventListener('load', () => {
