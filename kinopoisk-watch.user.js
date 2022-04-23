@@ -1,15 +1,15 @@
 // ==UserScript==
-// @name         Kinopoisk Watch
-// @namespace    kinopoisk-watch
+// @name         FREEKINOPOISK
+// @namespace    FREEKINOPOISK
 // @version      1.0
 // @description  Watch films on Kinopoisk.ru for free!
-// @author       Kirlovon
+// @author       Kirlovon (Remake author KODYA_CODER)
 // @match        *://www.kinopoisk.ru/*/*
 // @grant        none
 // ==/UserScript==
 
 // Link to the viewer page
-const kinopoiskWatchLink = 'https://kirlovon.github.io/Kinopoisk-Watch';
+const kinopoiskWatchLink = 'https://freekinopoisk.ru/film.php';
 
 // Image of the banner
 const bannerImage = `
