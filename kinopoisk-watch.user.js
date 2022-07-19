@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 // Link to the viewer page
-const kinopoiskWatchLink = 'https://freekinopoisk.ru/film.php';
+const kinopoiskWatchLink = 'https://freekp.ru/film.php';
 
 // Image of the banner
 const bannerImage = `
